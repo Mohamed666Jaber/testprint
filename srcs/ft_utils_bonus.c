@@ -91,3 +91,40 @@ int	ft_putunbr_len(unsigned int n)
 {
 	return (ft_putunbr_recursive(n));
 }
+// Add these functions to your existing ft_utils.c
+
+static int	ft_putunbr_recursive_precision(unsigned int n, int *count)
+{
+	int	total;
+
+	total = 0;
+	if (n >= 10)
+		total += ft_putunbr_recursive_precision(n / 10, count);
+	if (*count > 0)
+	{
+		ft_putchar_len((n % 10) + '0');
+		total++;
+		(*count)--;
+	}
+	return (total);
+}
+
+int	ft_putunbr_precision(unsigned int n, int precision)
+{
+	int	count;
+	int	num_len;
+
+	count = 0;
+	num_len = ft_unum_len(n, 10);
+	if (n == 0 && precision == 0)
+		return (0);
+	if (precision > num_len)
+	{
+		while (precision-- > num_len)
+			count += ft_putchar_len('0');
+	}
+	count += ft_putunbr_len(n);
+	return (count);
+}
+
+// Update your existing ft_putnbr_base to work with the new system
