@@ -4,7 +4,7 @@ AR=ar -rcs
 NAME=libftprintf.a
 SRCS=srcs/ft_print_memory.c  srcs/ft_putchar.c  srcs/ft_putnbr_base.c \
 		 srcs/ft_putstr.c	srcs/ft_strlen.c ft_printf.c\
-   
+   srcs/ft_utils.c srcs/ft_handlers.c srcs/ft_parse_flags.c
 OBJS=$(SRCS:.c=.o)
 
 all: $(NAME)
