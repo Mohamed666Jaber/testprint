@@ -1,57 +1,48 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   ft_printf.c                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mjaber <mjaber@student.1337.ma>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/01 18:55:49 by mjaber            #+#    #+#             */
-/*   Updated: 2025/11/03 14:15:22 by mjaber           ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "ft_printf.h"
 
-static int	ft_print_format(char c, va_list args)
+static int	ft_print_format(char c, t_flags flags, va_list args)
 {
 	if (c == 'c')
-		return (ft_putchar(va_arg(args, int)));
+		return (ft_handle_char(va_arg(args, int), flags));
 	else if (c == 's')
-		return (ft_putstr(va_arg(args, char *)));
+		return (ft_handle_string(va_arg(args, char *), flags));
 	else if (c == 'p')
-		return (ft_print_memory(va_arg(args, void *)));
-	else if (c == 'i' || c == 'd')
-		return (ft_putnbr_base(va_arg(args, int), "0123456789"));
+		return (ft_handle_pointer(va_arg(args, void *), flags));
+	else if (c == 'd' || c == 'i')
+		return (ft_handle_int(va_arg(args, int), flags));
 	else if (c == 'u')
-		return (ft_putunbr(va_arg(args, unsigned int)));
+		return (ft_handle_unsigned(va_arg(args, unsigned int), flags));
 	else if (c == 'x')
-		return (ft_putnbr_base(va_arg(args, unsigned int), "0123456789abcdef"));
+		return (ft_handle_hex(va_arg(args, unsigned int), 0, flags));
 	else if (c == 'X')
-		return (ft_putnbr_base(va_arg(args, unsigned int), "0123456789ABCDEF"));
+		return (ft_handle_hex(va_arg(args, unsigned int), 1, flags));
 	else if (c == '%')
-		return (ft_putchar('%'));
+		return (ft_handle_percent(flags));
 	return (0);
 }
 
 int	ft_printf(const char *format, ...)
 {
 	va_list	args;
+	int		i;
 	int		count;
+	t_flags	flags;
 
 	count = 0;
+	i = 0;
 	va_start(args, format);
-	if (!format)
-		return (-1);
-	while (*format)
+	while (format[i])
 	{
-		if (*format == '%' && *(format + 1))
+		if (format[i] == '%' && format[i + 1])
 		{
-			count += ft_print_format(*(format + 1), args);
-			format++;
+			i++;
+			flags = ft_init_flags();
+			i = ft_parse_flags(format, i, &flags, args);
+			count += ft_print_format(format[i], flags, args);
 		}
-		else if (*format != '%')
-			count += ft_putchar(*format);
-		format++;
+		else
+			count += ft_putchar_len(format[i]);
+		i++;
 	}
 	va_end(args);
 	return (count);
