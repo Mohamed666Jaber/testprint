@@ -128,3 +128,22 @@ int	ft_putunbr_precision(unsigned int n, int precision)
 }
 
 // Update your existing ft_putnbr_base to work with the new system
+int	ft_putnbr_base(long long nbr, char *base)
+{
+	int		base_len;
+	int		count;
+	long long	num;
+
+	count = 0;
+	base_len = ft_strlen(base);
+	if (base_len <= 1)
+		return (0);
+	num = nbr;
+	if (num < 0)
+		num = -num;
+	if (num >= base_len)
+		count += ft_putnbr_base(num / base_len, base);
+	ft_putchar_len(base[num % base_len]);
+	count++;
+	return (count);
+}
